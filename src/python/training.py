@@ -26,7 +26,7 @@ def main(argv):
     curr_dir = os.getcwd()
     run_bert = True
     run_svm = False
-    data_dir = '/data/'
+    data_dir = 'data'
     levels = ["1", "2", "3", "4a", "4b"]
     model_dir = '/models/'
     validate = False
