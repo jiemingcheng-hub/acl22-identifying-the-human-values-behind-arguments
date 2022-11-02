@@ -28,10 +28,10 @@ def main(argv):
     run_bert = True
     run_svm = False
     run_one_baseline = False
-    data_dir = '/data/'
+    data_dir = 'data/'
     levels = ["1", "2", "3", "4a", "4b"]
-    model_dir = '/models/'
-    output_dir = '/output/'
+    model_dir = 'models/'
+    output_dir = 'output/'
 
     try:
         opts, args = getopt.gnu_getopt(argv, "c:d:hl:m:o:",
