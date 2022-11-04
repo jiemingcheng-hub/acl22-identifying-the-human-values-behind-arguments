@@ -206,7 +206,9 @@ def train_roberta_model(train_dataframe, model_dir, labels, test_dataframe=None,
         num_train_epochs=num_train_epochs,
         weight_decay=0.01,
         load_best_model_at_end=True,
-        metric_for_best_model='marco-avg-f1score'
+        metric_for_best_model='marco-avg-f1score',
+        save_steps=5000
+
     )
 
     model = load_model_from_data_dir("'roberta-base", num_labels=len(labels))
@@ -217,7 +219,7 @@ def train_roberta_model(train_dataframe, model_dir, labels, test_dataframe=None,
         train_dataset=ds["train"],
         eval_dataset=ds["test"],
         compute_metrics=lambda x: compute_metrics(x, labels),
-        tokenizer=tokenizer
+        tokenizer=tokenizer,
     )
 
     multi_trainer.train()
