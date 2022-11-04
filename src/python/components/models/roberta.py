@@ -2,7 +2,7 @@ import torch
 
 from datasets import (Dataset, DatasetDict, load_dataset)
 from transformers import (AutoTokenizer, AutoModelForSequenceClassification,
-                          PreTrainedModel, RobertaTokenizer, RobertaModel, RobertForSequenceClassification,
+                          PreTrainedModel, RobertaTokenizer, RobertaModel, RobertaForSequenceClassification,
                           TrainingArguments, Trainer)
 from sklearn.metrics import f1_score
 
