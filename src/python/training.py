@@ -4,7 +4,7 @@ import os
 
 from components.setup import (load_values_from_json, load_arguments_from_tsv, load_labels_from_tsv,
                                                 combine_columns, split_arguments)
-from components.models import (train_bert_model, train_svm)
+from components.models import (train_bert_model, train_svm, train_roberta_model)
 
 help_string = '\nUsage:  training.py [OPTIONS]' \
               '\n' \
@@ -26,6 +26,8 @@ def main(argv):
     curr_dir = os.getcwd()
     run_bert = True
     run_svm = False
+    run_test = False
+    run_roberta = False
     data_dir = 'data'
     levels = ["1", "2", "3", "4a", "4b"]
     model_dir = 'models/'
@@ -42,10 +44,12 @@ def main(argv):
             sys.exit()
         elif opt in ('-c', '--classifier'):
             run_bert = 'b' in arg.lower()
+            run_roberta = 'r' in arg.lower()
             run_svm = 's' in arg.lower()
-            if not run_bert and not run_svm:
-                print('No classifiers selected')
-                sys.exit(2)
+            run_test = 't' in arg.lower()
+            # if not run_bert and not run_svm:
+            #     print('No classifiers selected')
+            #     sys.exit(2)
         elif opt in ('-d', '--data-dir'):
             data_dir = arg
         elif opt in ('-l', '--levels'):
@@ -136,14 +140,26 @@ def main(argv):
             print("===> Bert: Training Level %s..." % levels[i])
             if validate:
                 bert_model_evaluation = train_bert_model(df_train_all[i],
-                                                         os.path.join(model_dir, 'bert_train_level{}'.format(levels[i])),
+                                                         os.path.join(model_dir, 'roberta_train_level{}'.format(levels[i])),
                                                          values[levels[i]], test_dataframe=df_valid_all[i])
                 print("F1-Scores for Level %s:" % levels[i])
                 print(bert_model_evaluation['eval_f1-score'])
             else:
-                train_bert_model(df_train_all[i], os.path.join(model_dir, 'bert_train_level{}'.format(levels[i])),
+                train_bert_model(df_train_all[i], os.path.join(model_dir, 'roberta_train_level{}'.format(levels[i])),
                                  values[levels[i]])
 
+    if run_roberta:
+        for i in range(num_levels):
+            print("===> Roberta: Training Level %s..." % levels[i])
+            if validate:
+                bert_model_evaluation = train_roberta_model(df_train_all[i],
+                                                         os.path.join(model_dir, 'roberta_train_level{}'.format(levels[i])),
+                                                         values[levels[i]], test_dataframe=df_valid_all[i])
+                print("F1-Scores for Level %s:" % levels[i])
+                print(roberta_model_evaluation['eval_f1-score'])
+            else:
+                train_roberta_model(df_train_all[i], os.path.join(model_dir, 'roberta_train_level{}'.format(levels[i])),
+                                 values[levels[i]])
     if run_svm:
         for i in range(num_levels):
             print("===> SVM: Training Level %s..." % levels[i])
@@ -158,6 +174,11 @@ def main(argv):
                 train_svm(df_train_all[i], values[levels[i]],
                           os.path.join(model_dir, 'svm/svm_train_level{}_vectorizer.json'.format(levels[i])),
                           os.path.join(model_dir, 'svm/svm_train_level{}_models.json'.format(levels[i])))
+
+    if run_test:
+        print("type", type(df_train_all[i]))  #  type <class 'pandas.core.frame.DataFrame'>
+        print("shape", df_train_all[i].shape) # shape (4240, 7)
+
 
 
 if __name__ == '__main__':
