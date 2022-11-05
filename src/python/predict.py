@@ -5,7 +5,7 @@ import pandas as pd
 
 from components.setup import (load_values_from_json, load_arguments_from_tsv, split_arguments,
                               write_tsv_dataframe, create_dataframe_head)
-from components.models import (predict_bert_model, predict_one_baseline, predict_svm)
+from components.models import (predict_bert_model, predict_roberta_model, predict_one_baseline, predict_svm)
 
 help_string = '\nUsage:  predict.py [OPTIONS]' \
               '\n' \
@@ -27,6 +27,7 @@ def main(argv):
     curr_dir = os.getcwd()
     run_bert = True
     run_svm = False
+    run_roberta = False
     run_one_baseline = False
     data_dir = 'data/'
     levels = ["1", "2", "3", "4a", "4b"]
@@ -46,10 +47,11 @@ def main(argv):
         elif opt in ('-c', '--classifier'):
             run_bert = 'b' in arg.lower()
             run_svm = 's' in arg.lower()
+            run_roberta = 'r' in arg.lower()
             run_one_baseline = 'o' in arg.lower()
-            if not run_bert and not run_svm and not run_one_baseline:
-                print('No classifiers selected')
-                sys.exit(2)
+            #if not run_bert and not run_svm and not run_one_baseline:
+            #    print('No classifiers selected')
+            #    sys.exit(2)
         elif opt in ('-d', '--data-dir'):
             data_dir = arg
         elif opt in ('-l', '--levels'):
@@ -120,6 +122,16 @@ def main(argv):
                                         values[levels[i]])
             df_bert = pd.concat([df_bert, pd.DataFrame(result, columns=values[levels[i]])], axis=1)
         df_prediction = df_bert
+
+    # predict with Robert model
+    if run_roberta:
+        df_roberta = create_dataframe_head(df_test['Argument ID'], model_name='Roberta')
+        for i in range(num_levels):
+            print("===> Roberta: Predicting Level %s..." % levels[i])
+            result = predict_roberta_model(df_test, os.path.join(model_dir, 'roberta_train_level{}'.format(levels[i])),
+                                        values[levels[i]])
+            df_roberta = pd.concat([df_roberta, pd.DataFrame(result, columns=values[levels[i]])], axis=1)
+        df_prediction = df_roberta
 
     # predict with SVM
     if run_svm:
