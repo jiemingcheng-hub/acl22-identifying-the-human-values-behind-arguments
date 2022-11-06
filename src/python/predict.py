@@ -28,6 +28,7 @@ def main(argv):
     run_bert = True
     run_svm = False
     run_roberta = False
+    run_deberta = False
     run_one_baseline = False
     data_dir = 'data/'
     levels = ["1", "2", "3", "4a", "4b"]
@@ -48,6 +49,7 @@ def main(argv):
             run_bert = 'b' in arg.lower()
             run_svm = 's' in arg.lower()
             run_roberta = 'r' in arg.lower()
+            run_deberta = 'd' in arg.lower()
             run_one_baseline = 'o' in arg.lower()
             #if not run_bert and not run_svm and not run_one_baseline:
             #    print('No classifiers selected')
@@ -132,6 +134,17 @@ def main(argv):
                                         values[levels[i]])
             df_roberta = pd.concat([df_roberta, pd.DataFrame(result, columns=values[levels[i]])], axis=1)
         df_prediction = df_roberta
+
+    # predict with Debert model
+    if run_deberta:
+        df_deberta = create_dataframe_head(df_test['Argument ID'], model_name='Deberta')
+        for i in range(num_levels):
+            print("===> Deberta: Predicting Level %s..." % levels[i])
+            result = predict_roberta_model(df_test, os.path.join(model_dir, 'deberta_train_level{}'.format(levels[i])),
+                                        values[levels[i]])
+            df_deberta = pd.concat([df_deberta, pd.DataFrame(result, columns=values[levels[i]])], axis=1)
+        df_prediction = df_deberta
+
 
     # predict with SVM
     if run_svm:

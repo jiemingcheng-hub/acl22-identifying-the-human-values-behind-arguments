@@ -2,7 +2,7 @@ import torch
 
 from datasets import (Dataset, DatasetDict, load_dataset)
 from transformers import (AutoTokenizer, AutoModelForSequenceClassification,
-                          PreTrainedModel, RobertaTokenizer, RobertaModel, RobertaForSequenceClassification,
+                          PreTrainedModel, DebertaTokenizer, DebertaModel, DebertaForSequenceClassification,
                           TrainingArguments, Trainer)
 from sklearn.metrics import f1_score
 
@@ -112,7 +112,7 @@ def convert_to_dataset(train_dataframe, test_dataframe, labels):
     return ds_enc, cols
 
 
-tokenizer = AutoTokenizer.from_pretrained("roberta-base")
+tokenizer = AutoTokenizer.from_pretrained("microsoft/deberta-base")
 
 
 def load_model_from_data_dir(model_dir, num_labels):
@@ -123,7 +123,7 @@ def load_model_from_data_dir(model_dir, num_labels):
     return model
 
 
-def predict_roberta_model(dataframe, model_dir, labels):
+def predict_deberta_model(dataframe, model_dir, labels):
     """
         Classifies each argument using the Bert model stored in `model_dir`
 
@@ -167,7 +167,7 @@ def predict_roberta_model(dataframe, model_dir, labels):
     return prediction
 
 
-def train_roberta_model(train_dataframe, model_dir, labels, test_dataframe=None, num_train_epochs=20):
+def train_deberta_model(train_dataframe, model_dir, labels, test_dataframe=None, num_train_epochs=20):
     """
         Trains Bert model with the arguments in `train_dataframe`
 
@@ -211,7 +211,7 @@ def train_roberta_model(train_dataframe, model_dir, labels, test_dataframe=None,
 
     )
 
-    model = load_model_from_data_dir("roberta-base", num_labels=len(labels))
+    model = load_model_from_data_dir("microsoft/deberta-base", num_labels=len(labels))
 
     multi_trainer = MultiLabelTrainer(
         model,

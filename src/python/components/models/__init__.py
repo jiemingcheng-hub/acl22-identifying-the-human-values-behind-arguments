@@ -21,4 +21,4 @@ from .bert import (train_bert_model, predict_bert_model)
 from .svm import (train_svm, predict_svm)
 from .one_baseline import (predict_one_baseline)
 from .roberta import (train_roberta_model, predict_roberta_model)
-
+from .deberta import (train_deberta_model, predict_deberta_model)
